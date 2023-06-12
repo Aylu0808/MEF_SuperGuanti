@@ -64,12 +64,20 @@ volatile int grados3 = 90;
 volatile bool flagPulsoIncremento = FALSE;
 volatile bool flagPulsoInicio = FALSE;
 
+volatile int menique = 0;
+volatile int indice = 0;
+volatile int anular = 0;
+volatile int mayor = 0;
+volatile int pulgar = 0;
+
+volatile int tmensajefinal = 0;
 
 void tiempo();
 void actualizarLcd();
 void juego();
 
 void setup(){
+
   Serial.begin(57600); 
 
   miservo_1.attach(9, 350, 2900); //servo base, derecha-izquierda
@@ -206,6 +214,8 @@ void loop(){
 
         ///SERVO 1 -- DERECHA IZQUIERDA -- 9/// COPIAR ESTO PARA TODAS LAS INSTRUCCIONES DE SERVO
         if(estadoBluetooth == '1'){
+
+          menique = menique++;
           grados1++;
           if(grados1 >= 180){
             grados1 = 180;
@@ -214,6 +224,8 @@ void loop(){
         }
 
         if(estadoBluetooth == '3'){
+
+          anular = anular++;
           grados1--;
           if(grados1 <= 0){
             grados1 = 0;
@@ -222,6 +234,8 @@ void loop(){
         }
         ///SERVO 2 -- ADELANTE ATRAS -- 6///
         if(estadoBluetooth == '5'){
+
+          mayor = mayor++;
           grados2++;
           if(grados2 >= 180){
             grados2 = 180;
@@ -230,6 +244,8 @@ void loop(){
         }
 
         if(estadoBluetooth == '7'){
+
+          indice = indice++;
           grados2--;
           if(grados2 <= 0){
             grados2 = 0;
@@ -238,6 +254,8 @@ void loop(){
         }
         ///SERVO 3 -- ABAJO -- 11///
         if(estadoBluetooth == '9'){    
+
+          pulgar = pulgar++;
           grados3--;        
           if(grados3<=0){
             grados3 = 90;
@@ -259,11 +277,17 @@ void loop(){
           }
           if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
             estadoInfras = 1;
+            
           }
         break;
         case 1:
           if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
             estadoInfras = 1;
+            
+            if(menique == 1 and digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
+
+              menique++;
+            }
           }
           if(digitalRead(infra1) == HIGH && digitalRead(infra2) == HIGH && digitalRead(infra3) == HIGH && digitalRead(infra4) == HIGH && digitalRead(infra5) == HIGH){
             contadorViajes++;
@@ -364,11 +388,34 @@ void actualizarLcd(){
       lcd.print(":");
       lcd.print(tseg);
 
+      if(tmensajefinal = 1){
+
+        estadoLcd = 4;
+      }
+      else {
+
+        estadoLcd = 3;
+      }
+
       // if(finMensajeFinal == FALSE) //esta flag se usaria para demostrar que se termino de imprimir el mensaje final
       //   estadoLcd = 4;
       // else
       //   estadoLcd = 1;
     break;
+    case 4:
+
+    lcd.setCursor(0,0);
+    lcd.print("me:");
+    lcd.print(menique);
+    lcd.print(" in:");
+    lcd.print(indice);
+    lcd.print(" pul:");
+    lcd.print(pulgar);
+    lcd.setCursor(0, 1);
+    lcd.print("an:");
+    lcd.print(anular);
+    lcd.print(" ma:");
+    lcd.print(mayor);
   }
 }
 void juego(){
