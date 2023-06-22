@@ -38,7 +38,7 @@ LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
 volatile int tIncremento = 0;
 volatile int tInicio = 0;
-volatile int tInfras = 0;
+volatile int tinfra = 0;
 volatile int taux = 0;
 volatile int tauxmili = 0;
 volatile int tlcd = 0;
@@ -71,14 +71,17 @@ volatile int anular = 0;
 volatile int mayor = 0;
 volatile int pulgar = 0;
 
+volatile int estadoRetencionDedos  = 1;
+volatile int estadoDedos  = 1;
+bool flagPulsoDedos = FALSE;
+
 volatile int tmensajefinal = 0;
 
 void actualizarLcd();
 void juego();
 
 void setup(){
-<<<<<<< HEAD
-=======
+
   //Inicializacion del Timer2
   cli(); 
   TCCR2A = 0; 
@@ -90,7 +93,6 @@ void setup(){
   TCCR2B |= (0b00000111); //1024 (preescala)
   TIMSK2 |= (1 << OCIE2A);
   sei(); 
->>>>>>> 4b5ea6d6f1a84aa91f50d3e822192291e3fa69a0
 
   Serial.begin(57600); 
 
@@ -145,6 +147,7 @@ ISR(TIMER2_COMPA_vect){
     
     if(taux >= 60){
       tlcd--;
+      tinfra++;
       taux = 0;
       if(estadoLcd == 2){
         tseg++;
@@ -255,7 +258,6 @@ void loop(){
         ///SERVO 1 -- DERECHA IZQUIERDA -- 9/// COPIAR ESTO PARA TODAS LAS INSTRUCCIONES DE SERVO
         if(estadoBluetooth == '1'){
 
-          menique = menique++;
           grados1++;
           if(grados1 >= 180){
             grados1 = 180;
@@ -265,7 +267,6 @@ void loop(){
 
         if(estadoBluetooth == '3'){
 
-          anular = anular++;
           grados1--;
           if(grados1 <= 0){
             grados1 = 0;
@@ -275,7 +276,6 @@ void loop(){
         ///SERVO 2 -- ADELANTE ATRAS -- 6///
         if(estadoBluetooth == '5'){
 
-          mayor = mayor++;
           grados2++;
           if(grados2 >= 180){
             grados2 = 180;
@@ -284,8 +284,7 @@ void loop(){
         }
 
         if(estadoBluetooth == '7'){
-
-          indice = indice++;
+          
           grados2--;
           if(grados2 <= 0){
             grados2 = 0;
@@ -295,7 +294,6 @@ void loop(){
         ///SERVO 3 -- ABAJO -- 11///
         if(estadoBluetooth == '9'){    
 
-          pulgar = pulgar++;
           grados3--;        
           if(grados3<=0){
             grados3 = 90;
@@ -317,23 +315,24 @@ void loop(){
           }
           if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
             estadoInfras = 1;
-            
+            tinfra = 0;
           }
         break;
         case 1:
-          if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
-            estadoInfras = 1;
-            
-            if(menique == 1 and digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
-
-              menique++;
-            }
-          }
-          if(digitalRead(infra1) == HIGH && digitalRead(infra2) == HIGH && digitalRead(infra3) == HIGH && digitalRead(infra4) == HIGH && digitalRead(infra5) == HIGH){
+          if(tinfra >= 3){
             contadorViajes++;
             juego();
             estadoInfras = 0;
           }
+          if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
+            
+            estadoInfras = 1;
+          }
+          // if(digitalRead(infra1) == HIGH && digitalRead(infra2) == HIGH && digitalRead(infra3) == HIGH && digitalRead(infra4) == HIGH && digitalRead(infra5) == HIGH){
+          //   contadorViajes++;
+          //   juego();
+          //   estadoInfras = 0;
+          // }
         break;
       }
     break;
