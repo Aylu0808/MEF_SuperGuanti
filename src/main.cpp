@@ -38,7 +38,6 @@ LiquidCrystal_I2C lcd(0x3F, 16, 2);
 
 volatile int tIncremento = 0;
 volatile int tInicio = 0;
-volatile int tinfra = 0;
 volatile int taux = 0;
 volatile int tauxmili = 0;
 volatile int tlcd = 0;
@@ -147,7 +146,6 @@ ISR(TIMER2_COMPA_vect){
     
     if(taux >= 60){
       tlcd--;
-      tinfra++;
       taux = 0;
       if(estadoLcd == 2){
         tseg++;
@@ -284,7 +282,8 @@ void loop(){
         }
 
         if(estadoBluetooth == '7'){
-          
+
+
           grados2--;
           if(grados2 <= 0){
             grados2 = 0;
@@ -315,24 +314,24 @@ void loop(){
           }
           if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
             estadoInfras = 1;
-            tinfra = 0;
           }
         break;
         case 1:
-          if(tinfra >= 3){
-            contadorViajes++;
-            juego();
-            estadoInfras = 0;
-          }
-          if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
-            
-            estadoInfras = 1;
-          }
-          // if(digitalRead(infra1) == HIGH && digitalRead(infra2) == HIGH && digitalRead(infra3) == HIGH && digitalRead(infra4) == HIGH && digitalRead(infra5) == HIGH){
+          // if(tinfra >= 3){
           //   contadorViajes++;
           //   juego();
           //   estadoInfras = 0;
           // }
+          if(digitalRead(infra1) == LOW || digitalRead(infra2) == LOW || digitalRead(infra3) == LOW || digitalRead(infra4) == LOW || digitalRead(infra5) == LOW){
+            
+            estadoInfras = 1;
+            estadoPrograma = 2;
+          }
+          if(digitalRead(infra1) == HIGH && digitalRead(infra2) == HIGH && digitalRead(infra3) == HIGH && digitalRead(infra4) == HIGH && digitalRead(infra5) == HIGH){
+            contadorViajes++;
+            juego();
+            estadoInfras = 0;
+          }
         break;
       }
     break;
